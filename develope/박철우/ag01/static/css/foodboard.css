@@ -347,9 +347,6 @@ body {
   left: 228px;
 }
 
-
-
-
 .bottom_content {
   margin: 0 auto;
 }
@@ -410,6 +407,47 @@ body {
   background:#fff;
 }
 
+.comment_Wrap{
+ width:500px;
+ margin:5px 10px 5px 15px;
+
+ }
+
+.comment_Title{
+  float:left;
+  margin-left: 48%;
+}
+
+.comment_Write{
+  width:500px;
+  height:100px;
+  margin:10px 0 10px 48%;
+  border-radius: 5px;
+  resize: none;
+  font-size:13px;
+  line-height:1.2;
+  float:left;
+}
+
+.comment_btn{
+  width:50px;
+  height:30px;
+  font-size:14px;
+  margin-left:7%;
+}
+
+.comment_seperator{
+  width:50%;
+  float:left;
+  margin:10px 0 10px 13%; 
+}
+
+.comment_list{border:1px solid #EFEFEF; width:50%; float:left; margin: 10px 0 10px 13%; border-radius: 5px;}
+.comment_nicName{
+  font-size:14px; text-align: left; margin-left:20px;
+}
+.comment_date{display:inline; font-size:12px; color:gray;}
+.comment_content{font-size:12px; color:#333; text-align: left; margin:10px 0 10px 25px;}
 /* foodboard-bview */
 
 
