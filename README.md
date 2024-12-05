@@ -10,7 +10,7 @@
 <h3>3. AngGGo/AngGGo 클릭 >> 본인이 편한 폴더 클릭(그 폴더에 계속 복제될 예정) >> alert창 뜨면 열기 클릭</h3>
 <h3>4. Repository 폴더에 진입 완료! >> 이후 다시 SMCLASS로 가고싶다면 왼쪽 상단 파일 탭 >> 최근 항목 열기 >> SMCLASS 폴더 클릭</h3>
 <h3>5. 풀/푸시/커밋 방법 >> 하단 터미널에 아래의 명령어를 입력</h3>
-<h3 style='red'> 반드시 AngGGo 폴더 작업창에서 실행해야함 </h3>
+<h3 style='color:red'> 반드시 AngGGo 폴더 작업창에서 실행해야함 </h3>
 <h4>git remote add origin https://github.com/AngGGo/AngGGo.git</h4>
 <h4>(깃허브의 원격저장소를 연결해주는 명령어)</h4>
 <h4>git pull origin</h4>
