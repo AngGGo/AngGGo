@@ -94,59 +94,19 @@ $(document).ready(function() {
     }); //ajax */
 
     } // if
+    
   }) //응모권 버튼
 
 
-  $(".btn_apply_event_coupon").click(function(){
-    // 랜덤값 생성(1~100)
-    // Math.floor( Math.random()*(max-min+1) ) + min; 
-    const ranNum = Math.floor((Math.random() * 99) +1);
-    const user_choice = Math.floor((Math.random() * 99) +1);
-    console.log(ranNum,user_choice)
-    if(ranNum === user_choice){
-      alert("")
-    }
 
 
 
-  }) 
 
 
 
 }); // jquery
 
 
-// ########### 3. 행운뽑기 이벤트
-document.addEventListener('DOMContentLoaded', () =>{
-  const btnTag = document.querySelector(".btn_apply_event_coupon")
-
-  // 행운뽑기 이벤트 생성
-  btnTag.addEventListener('click',(event) =>{
-    const result = getPrize()
-    outTag.textContent = `축하합니다! 쿠폰이 발급되었습니다. ${result}`
-    btnTag.disabled = true;
-  }) // 행운뽑기 버튼
-})
-// 랜덤값 생성(1~100)
-// Math.floor( Math.random()*(max-min+1) ) + min; 
-const ranNum = Math.floor((Math.random() * 99) +1);
-
-// 행운
-const gift = ['당첨','다음 기회에']
-// 확률
-const pbt = [30,70]
-// 리턴 경품 값?
-let res='';
-for(let i =0; i<gift.length; i++){
-  if(pbt[i] >= ranNum){
-    res = gift[i];
-    return res;
-  }
-  else if(pbt[pbt.length-1]<ranNum){
-    res = gift[gift.length-1]
-    return res
-  }
-}
 
 
 
