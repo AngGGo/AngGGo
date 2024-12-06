@@ -32,83 +32,87 @@
 
       //----------- 비밀번호 찾기 화면 ---------------------
       signup.on("click", function(e) {
-        e.preventDefault(); // 기본 동작 방지
+        e.preventDefault();  // 페이지 새로고침 방지
 
         // 비밀번호 찾기 화면으로 변경
         $(this).parent().css("opacity", "1");
         $(this).parent().siblings().css("opacity", ".6");
-        $("#id_find").css("display", "none"); // 아이디 찾기 버튼 숨기기
-        $("#pw_find").css("display", "block"); // 비밀번호 찾기 버튼 나타내기
+        $("#id_find").css("display","none"); // 아이디 찾기 버튼 숨기기
+        $("#pw_find").css("display","block"); // 비밀번호 찾기 버튼 나타내기
 
         // 이름 텍스트박스를 비밀번호 찾기 화면에 맞게 변환
         first_input.removeClass("first-input__block").addClass("signup-input__block");
 
         // 인증번호 입력 부분 보이기
         hidden_input.css({
-          "opacity": "1",
-          "display": "block"
+            "opacity": "1",  // 인증번호 입력부분 나타내기
+            "display": "block"
         });
 
-        // **버튼 초기화**
-        resendEmail.css("display", "none"); // 인증번호 재전송 버튼 숨기기
-        sendEmailBtn.css("display", "inline-block"); // 인증번호 전송 버튼 보이기
+        // 인증번호 재전송 버튼 숨기기
+        resendEmail.css("display", "none");
+        // 인증번호 전송 버튼 보이기
+        sendEmailBtn.css("display", "inline-block");
 
-        // 아이디/패스워드 결과 부분 숨기기
+        // 아이디/패스워드 알려주는 칸 숨기기
         hidden_result.css({
-          "opacity": "0",
+          "opacity": "0",  
           "display": "none"
         });
-      });
 
-      // 인증번호 전송 버튼 클릭
-      sendEmailBtn.on("click", function() {
-        const name = $("#name").val(); // 이름 가져오기
-        const email = $("#email").val(); // 이메일 가져오기
+        // 버튼 텍스트를 "비밀번호 찾기"로 변경
+        //find_btn.text("비밀번호 찾기");
 
-        // 입력값 유효성 검사
-        if ((!name) && (!email)) {
-          alert("이름과 이메일을 입력하세요.");
-          $("#name").focus();
-          return;
-        } else if (!name) {
-          alert("이름을 입력하세요.");
-          $("#name").focus();
-          return;
-        } else if (!email) {
-          alert("이메일 주소를 입력하세요.");
-          $("#email").focus();
-          return;
-        }
+        // ------- <인증번호 전송> 버튼 클릭 시 랜덤 숫자 전송 -------
+        sendEmailBtn.on("click", function() {
+          const name = $("#name").val(); // 입력된 이름 가져오기
+          const email = $("#email").val(); // 입력된 이메일 주소 가져오기
 
-        // 랜덤 6자리 숫자 생성
-        verificationCode = Math.floor(100000 + Math.random() * 900000);
-
-        // 이메일로 인증번호 전송 (AJAX 요청)
-        $.ajax({
-          url: '/member/send_verification_code/', // 서버 URL
-          type: 'POST',
-          headers: { "X-CSRFToken": csrfToken },
-          data: {
-            name: name,
-            email: email,
-            verification_code: verificationCode
-          },
-          success: function(response) {
-            if (response.result === 'success') {
-              alert("인증번호가 전송되었습니다.");
-
-              // 버튼 전환
-              sendEmailBtn.css("display", "none"); // 인증번호 전송 버튼 숨기기
-              resendEmail.css("display", "inline-block"); // 인증번호 재전송 버튼 보이기
-            } else {
-              alert("전송 실패: " + response.message);
-            }
-          },
-          error: function() {
-            alert("서버 오류. 다시 시도해주세요.");
+          // 입력값 유효성 검사
+          if ((!name) && (!email)) {
+            alert("이름과 이메일을 입력하세요.");
+            $("#name").focus();
+            return;
+          } else if (!name) {
+            alert("이름을 입력하세요.");
+            $("#name").focus();
+            return;
+          } else if (!email) {
+            alert("이메일 주소를 입력하세요.");
+            $("#email").focus();
+            return;
           }
-        }); //ajax
-      }); // sendEmailBtn 인증번호 전송 버튼
+
+          // 랜덤 6자리 숫자 생성
+          verificationCode = Math.floor(100000 + Math.random() * 900000);  // 6자리 랜덤 숫자
+
+          // 이메일로 랜덤 숫자 전송 (여기선 AJAX로 서버에 요청한다고 가정)
+          $.ajax({
+            url: '/member/send_verification_code/', // 서버에서 처리할 URL
+            type: 'POST',
+            headers : {"X-CSRFToken" : csrfToken},
+            data: {
+              name: name,
+              email: email,
+              verification_code: verificationCode
+            },
+            success: function(response) {
+              if (response.result == 'success') {
+                alert("인증번호가 전송되었습니다.");
+              } else {
+                alert("전송 실패. " + response.message);
+              }
+            },
+            error: function() {
+              alert("서버 오류. 다시 시도해주세요.");
+            }
+          }); // ajax
+
+          // 인증번호 재전송 버튼 나타내기
+
+
+
+        }); // sendEmailBtn 인증번호 전송 버튼
     
         // ----- 비밀번호 찾기 버튼!!!!!!인데 인증번호 확인이 되고 있음. 
         $("#pw_find").on("click", function() {

@@ -111,19 +111,23 @@ def send_verification_code(request):
    
 ### 아이디 찾기 - 이름, 이메일 맞는지 확인
 def findId(request):
-  name = request.POST.get("name", "")
-  email = request.POST.get("email", "")
+  try:
+    name = request.POST.get("name", "")
+    email = request.POST.get("email", "")
 
-  qs = Member.objects.filter(name=name, email=email)
-  print(f"이름 :{name}\n이메일 주소 : {email}")
+    print(f"이름 : {name}\n이메일 주소 : {email}")
 
-  if qs:
-    list_qs = list(qs.values()) # 이름, email주소, id 묶어서 list_qs에 저장
-    context = {"result":"success", "member":list_qs}
-  else:
-    context = {"fail":"회원정보가 존재하지 않습니다."}
-  return JsonResponse(context)
-
+    qs = Member.objects.filter(name=name, email=email)
+    if qs.exists():
+      user = qs.first()  # 첫 번째 일치하는 사용자
+      return JsonResponse({
+        "result": "success", "name": user.name, "user_id": user.id
+      })
+    else:
+      return JsonResponse({"result": "fail", "message": "존재하지 않는 회원입니다."})
+  except Exception as e:
+    print(f"오류 발생 : {e}")
+    return JsonResponse({"result": "error", "message": "서버 오류 발생"})
 
 ### 아이디/비밀번호 찾기 페이지
 def findInfo(request):

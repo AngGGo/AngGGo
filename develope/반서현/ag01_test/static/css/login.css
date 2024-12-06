@@ -168,13 +168,23 @@ form .signin__btn:hover {
   background-color: #e080a3;
 }
 
-
-
-
-
-
-
-
+/* 인증번호 확인 버튼 */
+#chkEmailCode{
+  position: absolute;
+  right: 170px; /* 오른쪽에 위치시키기 */
+  top: 50%; /* 입력 필드 중앙에 수직 위치시키기 */
+  transform: translateY(-50%);
+  padding: 6px 12px;
+  background-color: #f4a7c3; /* 버튼 색상 */
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: none; /* 기본적으로 숨김 */
+  border-radius: 5px;
+}
+#chkEmailCode.show {
+  display: inline-block; /* show 클래스 추가 시 보이도록 */
+}
 
 
 
