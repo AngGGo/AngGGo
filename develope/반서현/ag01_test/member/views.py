@@ -11,26 +11,27 @@ from .models import EmailVerification  # 인증번호를 저장할 모델을 사
 import random
 import smtplib
 from email.mime.text import MIMEText
-
+from datetime import datetime
 
 ### 약관동의에 체크했는지 확인
 def agreeChk(request):
   if request.method == "POST":
     agree1 = request.POST.get("agree1")
-    agree2 = request.POST.get("agree2")
+    agree2 = request.POST.get("agree2","")
 
     if agree1 == 1:
       request.session['agree1'] = agree1
     if agree2 == 1:
       request.session['agree2'] = agree2
-    return JsonResponse({"result"})
+    today = datetime.now().strftime("y-m-d")
+    context = {"result":"success","today":today}
+    return JsonResponse(context)
     
 
     # ## db저장 아 이거 아닌데????? 아니벌써저장하면안되고 쿠키나세션에저장하고 나중에같이보내야돼
     # Member.objects.create(agree1, agree2)
     # print(f"[ 필수/선택 약관동의 확인 ]\n필수 : {agree1}\선택 : {agree2}")
 
-    return JsonResponse(context)
 
 
 ### 회원가입 - step01. 약관동의
