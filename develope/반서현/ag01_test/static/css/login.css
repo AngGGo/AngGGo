@@ -146,13 +146,13 @@ form .signin__btn:hover {
   color: #1b1f38;
 }
 
-.sendEmailBtn {
+.sendEmailBtn, .resendEmailBtn, .chkEmailCodeBtn  {
   position: absolute;
   right: 40px; /* 오른쪽에 위치시키기 */
   top: 50%; /* 입력 필드 중앙에 수직 위치시키기 */
   transform: translateY(-50%);
   padding: 6px 12px;
-  background-color: #f4a7c3; /* 버튼 색상 */
+  background-color: #e91e63; /* 버튼 색상 */
   border: none;
   color: white;
   cursor: pointer;
@@ -164,7 +164,7 @@ form .signin__btn:hover {
   display: inline-block; /* show 클래스 추가 시 보이도록 */
 }
 
-.sendEmailBtn:hover {
+.sendEmailBtn, .resendEmailBtn:hover {
   background-color: #e080a3;
 }
 
