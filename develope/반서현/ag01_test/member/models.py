@@ -10,17 +10,15 @@ class Member(models.Model):
   email = models.EmailField(max_length=100) # 사용자이메일
   tel = models.CharField(max_length=20) # 사용자 전화번호
   point = models.IntegerField(default=0) # 마일리지
+
   agree1 = models.DateTimeField(auto_now=True) # 필수약관동의
   agree2 = models.DateTimeField(auto_now=True) # 선택약관동의
   mDate = models.DateTimeField(auto_now=True) # 가입일
-
-  def __str__(self):
-    return f"{self.id}, {self.name}, {self.mDate}"
-
-class EmailVerification(models.Model):
+  
+  # 비밀번호 찾기 - 인증번호 관련
   verification_email = models.EmailField()  # 이메일 인증용
   verification_code = models.CharField(max_length=6) # 인증번호
   created_at = models.DateTimeField(auto_now_add=True)  # 생성 일시
 
   def __str__(self):
-    return f"{self.verification_email} - {self.verification_code}"
+    return f"{self.id}, {self.name}, {self.mDate}"

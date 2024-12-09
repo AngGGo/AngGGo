@@ -7,7 +7,6 @@ from django.core.mail import get_connection, EmailMessage
 from django.utils.crypto import get_random_string
 from django.conf import settings
 from django.contrib import messages
-from .models import EmailVerification  # 인증번호를 저장할 모델을 사용할 것
 import random
 import smtplib
 from email.mime.text import MIMEText
@@ -32,25 +31,28 @@ def agreeChk(request):
     # Member.objects.create(agree1, agree2)
     # print(f"[ 필수/선택 약관동의 확인 ]\n필수 : {agree1}\선택 : {agree2}")
 
+### 회원가입 - signup
+def signup(request):
+  return render(request, "signup.html")
 
+### ---------------------------- 아이디/비밀번호 찾기 ----------------------------
+# ---------------------------- 비밀번호 찾기 ----------------------------
 
-### 회원가입 - step01. 약관동의
-def join01(request):
-  return render(request, "join01.html")
-
-# ---------------------------- 아이디/패스워드 찾기 (인증번호) ----------------------------
-## 인증번호 확인
+# 인증번호 확인 버튼
 def verify_code(request):
   if request.method == 'POST':
-    input_code = request.POST.get('verification_code')
-    saved_code = request.session.get('verification_code')
+    input_code = request.POST.get('chkEmailCode')  # 유저가 입력한 인증번호
+    saved_code = request.session.get('verification_code')  # 세션에서 인증번호 가져오기
 
-    if not input_code or not saved_code:
+    if not input_code:
       return JsonResponse({"result": "error", "message": "인증번호를 입력하세요."})
+    if not saved_code:
+      return JsonResponse({"result": "error", "message": "인증번호를 먼저 요청하세요."})
 
+    # 인증번호 일치 여부 확인
     if input_code == saved_code:
-        # 인증번호가 일치하면 비밀번호를 화면에 띄우기
-      member_id = request.session.get('member_id')
+      # 인증번호가 일치하면 비밀번호를 화면에 띄우기
+      member_id = request.session['member_id']
       member = Member.objects.get(id=member_id)
 
       return JsonResponse({"result": "success", "message": f"인증되었습니다. 비밀번호는 {member.pw}입니다."})
@@ -66,8 +68,8 @@ def send_verification_code(request):
     name = request.POST.get("name")
     email = request.POST.get('email')
 
-    # 이름과 이메일이 존재하는지 확인
     try:
+      # 이름과 이메일이 존재하는지 확인
       member = Member.objects.get(name=name, email=email)
     except Member.DoesNotExist:
       return JsonResponse({"result": "error", "message": "존재하지 않는 회원입니다."})
@@ -79,38 +81,69 @@ def send_verification_code(request):
     request.session['verification_code'] = verification_code
     request.session['member_id'] = member.id
 
-    smtpName = "smtp.naver.com"
-    smtpPort = 587
+    # 이메일로 인증번호 전송
+    try:
+      smtpName = "smtp.naver.com"
+      smtpPort = 587
+      sendEmail = "bd8860@naver.com"
+      pw = "YTZTLRBETCV2"
+      recvEmail = email
+      title = "비밀번호 찾기용 인증번호"
+      content = f"인증번호는 {verification_code} 입니다."
 
-    # id, pw, 받는사람 이메일주소
-    sendEmail = "bd8860@naver.com"
-    pw = "YTZTLRBETCV2"
-    recvEmail = email
-    title = "제목 : 파이썬 이메일 보내기 안내"
-    content = f"""{verification_code}"""  # """ >> 쌍따옴표 안에 공백도 포함
+      msg = MIMEText(content)
+      msg['Subject'] = title
+      msg['From'] = sendEmail
+      msg['To'] = recvEmail
 
-    # 설정
-    msg = MIMEText(content)
-    msg['Subject'] = title
-    msg['From'] = sendEmail
-    msg['To'] = recvEmail
-    print("msg 데이터 : ",msg.as_string())
+      s = smtplib.SMTP(smtpName, smtpPort)
+      s.starttls()
+      s.login(sendEmail, pw)
+      s.sendmail(sendEmail, recvEmail, msg.as_string())
+      s.quit()
 
-    # 서버 이름, 서버 포트 설정
-    s = smtplib.SMTP(smtpName,smtpPort)
-    s.starttls()
-    s.login(sendEmail,pw)
-    s.sendmail(sendEmail,recvEmail,msg.as_string())
-    s.quit()
-
-    # 메일발송 완료
-    print("메일을 발송했습니다.")
-
-    context = {"result":"success"}
-    return JsonResponse(context)
+      context = {"result":"success"}
+      return JsonResponse(context)
+    except Exception as e:
+      return JsonResponse({"result": "error", "message": f"메일 전송 실패: {str(e)}"})
     
    
-### 아이디 찾기 - 이름, 이메일 맞는지 확인
+### 비밀번호 찾기 버튼 - 이름, 이메일, 인증번호 맞는지 확인
+def findPassword(request):
+  if not request.session.get("verification_code", None):
+    return JsonResponse({"success": "error", "message": "인증번호를 확인해주세요."})
+  
+  if request.method == "POST":
+      ## 사용자가 입력한 정보
+      name = request.POST.get("name", "")
+      email = request.POST.get("email", "")
+      chkEmailCode = request.POST.get("chkEmailCode", "")
+
+      print(f"이름 : {name}\n이메일 주소 : {email}\n인증번호 : {chkEmailCode}")
+
+      if not name or not email:
+        return JsonResponse({"result": "error", "message": "이름과 이메일을 모두 입력하세요."})
+
+      # 사용자 조회
+      try:
+        qs = Member.objects.filter(name=name, email=email)
+        if qs.exists():
+          user = qs.first()  # 첫 번째 일치하는 사용자
+          
+          # 인증번호 확인
+          if chkEmailCode != request.session.get("verification_code"):
+            return JsonResponse({"result": "error", "message": "인증번호가 일치하지 않습니다."})
+          
+          return JsonResponse({
+            "result": "success", "name": user.name, "user_pw": user.pw
+          })
+        else:
+          return JsonResponse({"result": "error", "message": "존재하지 않는 회원입니다."})
+      except Exception as e:
+        return JsonResponse({"result": "error", "message": f"서버 오류: {str(e)}"})
+
+
+# ---------------------------- 아이디 찾기 ----------------------------
 def findId(request):
   try:
     name = request.POST.get("name", "")
@@ -133,27 +166,28 @@ def findId(request):
 ### 아이디/비밀번호 찾기 페이지
 def findInfo(request):
     return render(request, "findInfo.html")
-# // --------------------------- 아이디/패스워드 찾기 (인증번호) ----------------------------
+### // --------------------------- 아이디/비밀번호 찾기 ----------------------------
+
 
 ### 로그아웃
 def logout(request):
   request.session.clear()
   return redirect("/")
 
-### 로그인 - 아이디/패스워드 일치 확인
+### 로그인 - 아이디/비밀번호 일치 확인
 def loginChk(request):
   id = request.POST.get("id", "")
   pw = request.POST.get("pw", "")
 
   ## db확인
   qs = Member.objects.filter(id=id, pw=pw)
-  print(f"[ 아이디/패스워드 확인 ]\n아이디 : {id}\n패스워드 : {pw}")
+  print(f"[ 아이디/비밀번호 확인 ]\n아이디 : {id}\n비밀번호 : {pw}")
 
-  # 아이디패스워드일치
+  # 아이디비밀번호일치
   if qs:
     request.session['session_id'] = qs[0].id
     request.session['session_nickname'] = qs[0].nickname
-    list_qs = list(qs.values()) # 아이디 패스워드 묶어서 list_qs에 저장
+    list_qs = list(qs.values()) # 아이디 비밀번호 묶어서 list_qs에 저장
     context = {"result":"success", "member":list_qs} # member라는 이름으로 list_qs 보내기
   else:
     context = {"result":"fail"}

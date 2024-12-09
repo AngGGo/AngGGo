@@ -14,16 +14,19 @@
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function(){
-      let signup = $(".links").find("li").find("#signup") ; 
-      let signin = $(".links").find("li").find("#signin") ;
-      let reset  = $(".links").find("li").find("#reset")  ; 
-      let first_input = $("form").find(".first-input");
-      let hidden_input = $("form").find(".input__block").find("#repeat__password");
-      let signin_btn  = $("form").find(".signin__btn");
-      /*
+      let signup = $("#signup"); 
+      let signin = $("#signin");
+      let reset  = $("#reset"); 
+      let first_input = $(".first-input");
+      let hidden_input = $("#repeat__password");
+      let signin_btn  = $(".signin__btn");
+
       //----------- 회원가입 ---------------------
-      회원가입 화면을 따로 만들지 여기에 할지 모르겠네
-      signup.on("click",function(e){
+      // 회원가입 화면은 따로 만들기
+      signup.on("click", function(e){
+        location.href="/member/signup/"
+      });
+/*      signup.on("click",function(e){
         e.preventDefault();
         $(this).parent().parent().siblings("h1").text("회원가입");
         $(this).parent().css("opacity","1");
@@ -35,7 +38,8 @@
         });
         signin_btn.text("회원가입");
       });
-      */
+*/
+
       //----------- 로그인 ---------------------
       signin.on("click",function(e){
         e.preventDefault();
@@ -120,18 +124,14 @@
       <a href="#" id="signin">로그인</a>
     </li>
     <li>
-      {% comment %} <a href="#" id="signup">회원가입</a> {% endcomment %}
+      <a href="#" id="signup">회원가입</a>
     </li>
     <li>
       <a href="#" id="reset">RESET</a>
     </li>
   </ul>
-  
-  <script>
 
-  </script>
-
-  <!-- Form -->
+  <!-- 로그인 Form -->
   <form action="/member/login/" method="post">
     {% csrf_token %}
     <!-- email input -->
@@ -151,6 +151,8 @@
       로그인
     </button>
   </form>
+
+  <!-- 아이디 / 비밀번호 찾기 -->
   <div class="find_info">
     <a href="/member/findInfo/">아이디 • 비밀번호 찾기</a>
   </div>
