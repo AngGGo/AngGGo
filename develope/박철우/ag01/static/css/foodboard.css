@@ -6,7 +6,6 @@ body {
 }
 
 #foodboard1 {
-  width: 100%;
   height: 1500px;
   margin: 15px auto;
   text-align: center;
@@ -18,7 +17,6 @@ body {
   flex: 1;
   height: auto;
   margin: 0;
-  width: 100%;
   text-align: center;
   font-size: 20px;
   font-weight: 700;
@@ -99,7 +97,6 @@ body {
   content:"";
   display:block;
   position:absolute;
-  width:100%;
   height:2px;
   bottom:-2px;
   background:#333;
@@ -195,7 +192,6 @@ body {
 }
 
 .btnAreaList {
-  width: 100%;
   text-align: center;
   clear: both;
   margin: 30px auto;
@@ -440,37 +436,6 @@ body {
 
 }
 
-.comment_Title {
-  float: left;
-}
-
-.comment_Write {
-  width: 500px;
-  height: 100px;
-  margin: 10px 0;
-  border-radius: 5px;
-  resize: none;
-  font-size: 13px;
-  line-height: 1.2;
-  float: left;
-}
-
-.comment_btn {
-  width: 60px;
-  height: 34px;
-  padding: 6px 6px;
-  float: left;
-  font-size: 14px;
-  color: #969696;
-  font-weight: 700;
-  text-align: center;
-  line-height: 14px;
-  border: 1px solid #e4e4e4;
-  border-radius: 2px;
-  background: #fff;
-}
-
-
 .comment_seperator {
   display: block;
   float: left;
@@ -478,47 +443,56 @@ body {
   margin: 10px 0 10px 13.5%;
 }
 
-.comment_list {
-  border: 1px solid #EFEFEF;
+.comment_div{
   width: 50%;
-  float: left;
+  height: auto;
+  display: flex;
+  flex-wrap:wrap;
+  justify-content: flex-start;
   margin: 10px 0 10px 13.5%;
+}
+
+.comment_list {
+  border: 1px solid #333;
+  width: 25%;
+  height: auto;
+  margin: 8px 0;
   border-radius: 5px;
+  background:white;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap:wrap;
+  flex:1 1 30%;
+  margin: 10px;
 }
 
-.comment_nicName {
-  font-size: 14px;
-  text-align: left;
-  margin-left: 20px;
-}
-
-.comment_date {
-  display: inline;
-  font-size: 12px;
-  color: gray;
-  margin-right: 30px;
+.comment_icon {
+  margin:3px; float:left; vertical-align: middle; display:inline;
+  width:30px;
 }
 
 .comment_content {
-  font-size: 12px;
-  color: #333;
-  text-align: left;
-  margin: 10px 0 10px 25px;
-  padding: 0 10px;
+  font-size: 18px;
+  margin-left: 5px;
+  display:flex;
+  align-items: center;
 }
 
-.comment_btn2 {
-  background-color: #ffffff;
-  padding: 3px 2px;
-  height: auto;
-  min-width: 30px;
-  border-radius: 5px;
-  font-size: 12px;
-  color: #969696;
-  font-weight: 700;
-  border: 1px solid #dcdcdc;
-  margin: 0 3px;
+.comment_cnt{
+  margin-right:20px;
+  text-align:right;
+  font-size:14px;
+  line-height:14px;
+  color:#333;
+  display:flex;
+  align-items: center;
 }
+
+.comment_effective{
+  background: #83f999;
+}
+
 
 /* foodboard-bview */
 
@@ -552,7 +526,6 @@ body {
 table {
   width: 700px;
   height: 550px;
-  border: 1px solid;
   margin: 0 auto;
 }
 
@@ -703,7 +676,6 @@ select {
 
 
 .right_items>a>h4 {
-  width: 100%;
   text-align: center;
   font-size: 13px;
   color: #111;
@@ -723,10 +695,10 @@ select {
 /* Brand*/
 
 
-/* mypage */
+/* mypage - update */
 #foodboard4 {
   width: 80%;
-  height: 3000px;
+  height: auto;
   margin: 15px auto;
   text-align: center;
   font-size: 20px;
@@ -755,11 +727,10 @@ select {
   display: block;
 }
 
-.content {
+.updateContent {
   float:left;
-  width:70%;
-  border:1px solid;
-  margin-left: 20px;
+  width:50%;
+  margin-left: 70px;
 }
 
 .sdb_items{
@@ -773,4 +744,78 @@ select {
 
 .sdb_right{
   margin-right:10px;
+}
+
+.memUpadte_title{
+  width:5%;
+  vertical-align: middle;
+  text-align: left;
+  padding-left:20px;
+}
+
+.memUpadte_content{
+    width: 5%;
+    vertical-align: middle;
+    text-align: left;
+    padding-left: 20px;
+}
+
+.memUpadte_content>input{
+  font-size:15px;
+  padding-left:5px;
+}
+
+.updateBtn {
+  display:block;
+  margin:20px auto;
+  text-align: center;
+  width: 131px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  background-color: rgb(164, 199, 255);
+}
+/* mypage - update */
+
+/* mypage - rvwCheck */
+.rvw_subtitle{
+float:left;
+margin-left:5%;
+margin-bottom:40px;
+}
+
+.rvw_table{
+  width:70%;
+  height:auto;
+}
+
+.rvw_tabtitle{
+  height:50px;
+  padding:20px auto;
+  border-bottom:1px solid #efefef;
+}
+
+.rvw_tabcontent{
+  height:50px;
+  font-size:16px;
+}
+
+.rvw_footer{
+  border-top:1px solid #efefef;
+  text-align:right;
+  padding-right: 50px;
+  padding-top:20px;
+}
+
+.rvw_subtitle2 {
+  float: left;
+  margin: 40px 0 40px 29%;
+}
+
+.rvw_table2{
+    width: 70%;
+    height: auto;
+    margin-left: 27%;
 }

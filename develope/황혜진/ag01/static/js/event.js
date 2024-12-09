@@ -7,13 +7,13 @@ $(document).ready(function() {
     // alert("테스트")
 
     // 세션이 비어있으면 로그인 페이지로 리다이렉트
-    if(aId == ""){
+    if (aId == "") {
       alert("로그인을 하셔야 출석체크가 가능합니다.")
       location.href="/member/login/"
       return;
     }
 
-
+    alert("{{request.session.session_id}}")
     // 출석체크 Ajax 요청
     $.ajax({ 
       headers:{"X-CSRFToken":csrfToken},
