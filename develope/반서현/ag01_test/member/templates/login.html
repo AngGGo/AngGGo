@@ -55,12 +55,13 @@
         signin_btn.text("로그인");
       });
      
-      //----------- reset ---------------------
+/*      //----------- reset ---------------------
       reset.on("click",function(e){
         e.preventDefault();
         $(this).parent().parent().siblings("form")
         .find(".input__block").find(".input").val("");
       });
+      */
     }); //ready
 
     
@@ -124,10 +125,10 @@
       <a href="#" id="signin">로그인</a>
     </li>
     <li>
-      <a href="#" id="signup">회원가입</a>
+      {% comment %} <a href="#" id="reset">RESET</a> {% endcomment %}
     </li>
     <li>
-      <a href="#" id="reset">RESET</a>
+      <a href="#" id="signup">회원가입</a>
     </li>
   </ul>
 

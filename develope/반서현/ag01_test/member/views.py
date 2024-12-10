@@ -12,7 +12,7 @@ import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime
 
-### 약관동의에 체크했는지 확인
+# ### 약관동의에 체크했는지 확인
 def agreeChk(request):
   if request.method == "POST":
     agree1 = request.POST.get("agree1")
@@ -31,13 +31,62 @@ def agreeChk(request):
     # Member.objects.create(agree1, agree2)
     # print(f"[ 필수/선택 약관동의 확인 ]\n필수 : {agree1}\선택 : {agree2}")
 
+### ---------------------- 아이디/닉네임/이메일 중복 확인 ----------------------
+## 이메일 중복 확인
+def emailDupChk(request):
+  userEmail = request.POST.get("email")
+  if Member.objects.filter(email=userEmail):
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 이메일입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 이메일입니다."})
+
+## 닉네임 중복 확인
+def nicknameDupChk(request):
+  userNickname = request.POST.get("nickname")
+  if Member.objects.filter(nickname=userNickname):
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 닉네임입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 닉네임입니다."})
+
+## 아이디 중복 확인
+def idDupChk(request):
+  userId = request.POST.get("id")
+  if Member.objects.filter(id=userId):
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 아이디입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 아이디입니다."})
+
 ### 회원가입 - signup
 def signup(request):
-  return render(request, "signup.html")
+  if request.method == "GET":
+    return render(request, "signup.html")
+  else:
+    id = request.POST.get("id")
+    pw = request.POST.get("pw")
+    name = request.POST.get("name")
+    nickname = request.POST.get("nickname")
+    tel = request.POST.get("tel")
+    email = request.POST.get("email")
+
+    # 중복 검사 (이미 중복 검사를 했지만 추가로 서버 측에서 한번 더 확인하는 것이 좋습니다)
+    if Member.objects.filter(id=id).exists():
+      return JsonResponse({"result": "error", "message": "아이디가 중복되었습니다."})
+    if Member.objects.filter(nickname=nickname).exists():
+      return JsonResponse({"result": "error", "message": "닉네임이 중복되었습니다."})
+    if Member.objects.filter(email=email).exists():
+      return JsonResponse({"result": "error", "message": "이메일이 중복되었습니다."})
+    
+    Member.objects.create(
+      id=id,
+      pw=pw,
+      name=name,
+      nickname=nickname,
+      tel=tel,
+      email=email
+    )
+
+    # 회원가입 후 로그인 페이지로 이동
+    return redirect("/member/login/")
 
 ### ---------------------------- 아이디/비밀번호 찾기 ----------------------------
 # ---------------------------- 비밀번호 찾기 ----------------------------
-
 # 인증번호 확인 버튼
 def verify_code(request):
   if request.method == 'POST':
