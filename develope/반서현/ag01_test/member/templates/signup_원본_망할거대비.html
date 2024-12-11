@@ -28,10 +28,8 @@
 
       var email_id = $("#email_id");
       var email_domain = $("#email_domain").val();
-      var email = email_id.val() + "@" + email_domain;
+      var email = "";
 
-      var addr = $("#sample6_postcode").val() + " " + $("#sample6_address").val() + " " + $("#sample6_detailAddress_address").val() + " " + $("#sample6_extraAddress").val();
-       
       // 정규표현식
       const expIdText = /^[A-Za-z]{3,20}$/;
       const expPwText = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -39,7 +37,6 @@
       const expNicknameText = /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,16}$/;
       const expTelText = /^\d{3}-\d{3,4}-\d{4}$/;
       const expEmailText = /^[a-z0-9\.\-_]+@([a-z0-9\-]+\.)+[a-z]{2,6}$/;
-
 
       // 유효성 검사 / 중복 확인 //
       /* --------------------- id --------------------- */
@@ -196,6 +193,7 @@
         }
       });
       
+      email = email_id.val() + "@" + email_domain
       if((email_id.val() != "") && (email_domain != "")){
         $.ajax({
           headers : {"X-CSRFToken":csrfToken},
@@ -275,30 +273,31 @@
         // 모든 조건 충족, 서버에 데이터 전송
         $.ajax({
           headers : {"X-CSRFToken":csrfToken},
-          url : "/member/newMember/",
+          url : "/member/signup/",
           type : "post",
           data : {
-            "id" : id.val(),
-            "pw" : pw.val(),
-            "name" : name.val(),
-            "nickname" : nickname.val(),
-            "tel" : tel.val(),
-            "email" : email,
-            "addr" : addr 
+            "id": 
+            "email":email
           },
   
           success : function(response){
-            if(response.result == "success"){
-              alert("회원가입이 완료되었습니다.");
-              location.href = "/member/login/";
-            } else{
-              alert(response.message);
+            if(!expEmailText.test(email)){
+              $("#expEmailError").css("display", "block");
+            } else if(response.result == "error"){
+              $("#emailDupError").text(response.message).css("display", "block");
+              $("#expEmailError").css("display", "none");
+            } else if (response.result == "success") {
+              $("#expEmailError").css("display", "none");
+              $("#emailDupError").css("display", "none");
+              console.log("이메일 : " + email);
             }
           },
           error : function(){
             alert("서버 오류");
           }
         }); // ajax
+
+
       }); // signupBtn - 회원가입 버튼
     }); // jquery
   </script>

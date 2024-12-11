@@ -19,8 +19,10 @@ urlpatterns = [
 
     ### 회원가입
     path('signup/', views.signup, name="signup"),  # 회원가입
+    path('newMember/', views.newMember, name="newMember"),  # 회원정보 저장
     path('idDupChk/', views.idDupChk, name="idDupChk"),  # 아이디 중복 확인
     path('nicknameDupChk/', views.nicknameDupChk, name="nicknameDupChk"),  # 닉네임 중복 확인
+    path('telDupChk/', views.telDupChk, name="telDupChk"),  # 전화번호 중복 확인
     path('emailDupChk/', views.emailDupChk, name="emailDupChk"),  # 이메일 중복 확인
     path('agreeChk/', views.agreeChk, name="agreeChk"),  # 회원가입 step01 약관동의
 

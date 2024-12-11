@@ -11,6 +11,7 @@ import random
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime
+from django.contrib.auth.hashers import make_password  # 비밀번호 암호화
 
 # ### 약관동의에 체크했는지 확인
 def agreeChk(request):
@@ -39,6 +40,13 @@ def emailDupChk(request):
     return JsonResponse({"result": "error", "message": "이미 사용 중인 이메일입니다."})
   return JsonResponse({"result": "success", "message": "사용 가능한 이메일입니다."})
 
+def telDupChk(request):
+  userTel = request.POST.get("tel")
+  if Member.objects.filter(tel=userTel):
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 전화번호입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 전화번호입니다."})
+
+
 ## 닉네임 중복 확인
 def nicknameDupChk(request):
   userNickname = request.POST.get("nickname")
@@ -50,13 +58,15 @@ def nicknameDupChk(request):
 def idDupChk(request):
   userId = request.POST.get("id")
   if Member.objects.filter(id=userId):
+    
     return JsonResponse({"result": "error", "message": "이미 사용 중인 아이디입니다."})
   return JsonResponse({"result": "success", "message": "사용 가능한 아이디입니다."})
 
-### 회원가입 - signup
-def signup(request):
+
+### 회원정보 저장
+def newMember(request):
   if request.method == "GET":
-    return render(request, "signup.html")
+    return JsonResponse({"result": "error", "message": "잘못된 요청입니다."})
   else:
     id = request.POST.get("id")
     pw = request.POST.get("pw")
@@ -64,27 +74,28 @@ def signup(request):
     nickname = request.POST.get("nickname")
     tel = request.POST.get("tel")
     email = request.POST.get("email")
+    addr = request.POST.get("addr")
 
-    # 중복 검사 (이미 중복 검사를 했지만 추가로 서버 측에서 한번 더 확인하는 것이 좋습니다)
-    if Member.objects.filter(id=id).exists():
-      return JsonResponse({"result": "error", "message": "아이디가 중복되었습니다."})
-    if Member.objects.filter(nickname=nickname).exists():
-      return JsonResponse({"result": "error", "message": "닉네임이 중복되었습니다."})
-    if Member.objects.filter(email=email).exists():
-      return JsonResponse({"result": "error", "message": "이메일이 중복되었습니다."})
-    
+    hashed_pw = make_password(pw) # 비밀번호 암호화
+
     Member.objects.create(
-      id=id,
-      pw=pw,
-      name=name,
-      nickname=nickname,
-      tel=tel,
-      email=email
+      id = id,
+      pw = hashed_pw,
+      name = name,
+      nickname = nickname,
+      tel = tel,
+      email = email,
+      addr = addr,
+      mDate = "now" # 가입일
     )
 
-    # 회원가입 후 로그인 페이지로 이동
-    return redirect("/member/login/")
+    return JsonResponse({"result": "success", "message": "회원가입이 완료되었습니다."})
 
+
+### 회원가입 - signup
+def signup(request):
+  return render(request, "signup.html")
+  
 ### ---------------------------- 아이디/비밀번호 찾기 ----------------------------
 # ---------------------------- 비밀번호 찾기 ----------------------------
 # 인증번호 확인 버튼
