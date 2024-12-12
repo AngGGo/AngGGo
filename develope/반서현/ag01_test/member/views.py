@@ -11,8 +11,10 @@ import random
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime
+from django.contrib.auth.hashers import make_password  # 비밀번호 암호화
+from django.contrib.auth.hashers import check_password  # 암호화 된 비밀번호와 원래 비밀번호 비교
 
-### 약관동의에 체크했는지 확인
+# ### 약관동의에 체크했는지 확인
 def agreeChk(request):
   if request.method == "POST":
     agree1 = request.POST.get("agree1")
@@ -31,13 +33,72 @@ def agreeChk(request):
     # Member.objects.create(agree1, agree2)
     # print(f"[ 필수/선택 약관동의 확인 ]\n필수 : {agree1}\선택 : {agree2}")
 
+### ---------------------- 아이디/닉네임/이메일 중복 확인 ----------------------
+## 이메일 중복 확인
+def emailDupChk(request):
+  userEmail = request.POST.get("email")
+  if Member.objects.filter(email=userEmail):
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 이메일입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 이메일입니다."})
+
+## 전화번호 중복 확인
+def telDupChk(request):
+  userTel = request.POST.get("tel")
+  if Member.objects.filter(tel=userTel):
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 전화번호입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 전화번호입니다."})
+
+## 닉네임 중복 확인
+def nicknameDupChk(request):
+  userNickname = request.POST.get("nickname")
+  if Member.objects.filter(nickname=userNickname):
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 닉네임입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 닉네임입니다."})
+
+## 아이디 중복 확인
+def idDupChk(request):
+  userId = request.POST.get("id")
+  if Member.objects.filter(id=userId):
+    
+    return JsonResponse({"result": "error", "message": "이미 사용 중인 아이디입니다."})
+  return JsonResponse({"result": "success", "message": "사용 가능한 아이디입니다."})
+
+
+### 회원정보 저장
+def newMember(request):
+  if request.method == "GET":
+    return JsonResponse({"result": "error", "message": "잘못된 요청입니다."})
+  else:
+    id = request.POST.get("id")
+    pw = request.POST.get("pw")
+    name = request.POST.get("name")
+    nickname = request.POST.get("nickname")
+    tel = request.POST.get("tel")
+    email = request.POST.get("email")
+    addr = request.POST.get("addr")
+
+    hashed_pw = make_password(pw) # 비밀번호 암호화
+
+    Member.objects.create(
+      id = id,
+      pw = hashed_pw,
+      name = name,
+      nickname = nickname,
+      tel = tel,
+      email = email,
+      addr = addr,
+      mDate = "now" # 가입일
+    )
+
+    return JsonResponse({"result": "success", "message": "회원가입이 완료되었습니다."})
+
+
 ### 회원가입 - signup
 def signup(request):
   return render(request, "signup.html")
-
+  
 ### ---------------------------- 아이디/비밀번호 찾기 ----------------------------
 # ---------------------------- 비밀번호 찾기 ----------------------------
-
 # 인증번호 확인 버튼
 def verify_code(request):
   if request.method == 'POST':
@@ -174,25 +235,28 @@ def logout(request):
   request.session.clear()
   return redirect("/")
 
-### 로그인 - 아이디/비밀번호 일치 확인
+# 아이디/비밀번호 일치 확인
 def loginChk(request):
-  id = request.POST.get("id", "")
-  pw = request.POST.get("pw", "")
+    id = request.POST.get("id", "")
+    pw = request.POST.get("pw", "")
 
-  ## db확인
-  qs = Member.objects.filter(id=id, pw=pw)
-  print(f"[ 아이디/비밀번호 확인 ]\n아이디 : {id}\n비밀번호 : {pw}")
+    # db에서 해당 아이디 검색
+    try:
+        user = Member.objects.get(id=id)
+        
+        # 입력된 비밀번호와 저장된 암호화된 비밀번호 비교
+        if check_password(pw, user.pw):
+            # 로그인 성공, 세션에 사용자 정보 저장
+            request.session['session_id'] = user.id
+            request.session['session_nickname'] = user.nickname
+            list_qs = list(Member.objects.filter(id=id).values())  # 사용자 정보 가져오기
+            context = {"result": "success", "member": list_qs}  # member 정보를 JSON으로 반환
+        else:
+            context = {"result": "fail", "message": "비밀번호가 틀렸습니다."}
+    except Member.DoesNotExist:
+        context = {"result": "fail", "message": "아이디가 존재하지 않습니다."}
 
-  # 아이디비밀번호일치
-  if qs:
-    request.session['session_id'] = qs[0].id
-    request.session['session_nickname'] = qs[0].nickname
-    list_qs = list(qs.values()) # 아이디 비밀번호 묶어서 list_qs에 저장
-    context = {"result":"success", "member":list_qs} # member라는 이름으로 list_qs 보내기
-  else:
-    context = {"result":"fail"}
-
-  return JsonResponse(context)
+    return JsonResponse(context)
 
 
 ### 로그인페이지

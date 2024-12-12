@@ -7,13 +7,15 @@ class Member(models.Model):
   name = models.CharField(max_length=100)  # 사용자명
   nickname = models.CharField(max_length=100) # 닉네임
   birth = models.DateField(null=True) # 생년월일
-  email = models.EmailField(max_length=100) # 사용자이메일
+  email = models.EmailField(max_length=100) # 사용자 이메일
   tel = models.CharField(max_length=20) # 사용자 전화번호
+  addr = models.CharField(max_length=200) # 사용자 주소
+  mDate = models.DateTimeField(auto_now_add=True) # 가입일
   point = models.IntegerField(default=0) # 마일리지
 
-  agree1 = models.DateTimeField(auto_now=True) # 필수약관동의
-  agree2 = models.DateTimeField(auto_now=True) # 선택약관동의
-  mDate = models.DateTimeField(auto_now=True) # 가입일
+  # 약관동의
+  agree1 = models.DateTimeField(auto_now_add=True) # 필수약관동의
+  agree2 = models.DateTimeField(auto_now_add=True) # 선택약관동의
   
   # 비밀번호 찾기 - 인증번호 관련
   verification_email = models.EmailField()  # 이메일 인증용

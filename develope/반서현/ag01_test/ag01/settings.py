@@ -65,6 +65,17 @@ WSGI_APPLICATION = 'ag01.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.oracle',
+#        'NAME': 'XE',
+#        'USER': 'ora_user',
+#        'PASSWORD': '1111',
+#        'HOST': 'localhost',
+#        'PORT': '1521',
+#    }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
