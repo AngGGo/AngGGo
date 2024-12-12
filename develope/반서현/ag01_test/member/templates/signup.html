@@ -26,11 +26,16 @@
       const nickname = $("#nickname");
       const tel = $("#tel");
 
-      var email_id = $("#email_id");
-      var email_domain = $("#email_domain").val();
-      var email = email_id.val() + "@" + email_domain;
+      let email_id = $("#email_id");
+      let email_domain = $("#email_domain").val();
+      let email = "";
 
-      var addr = $("#sample6_postcode").val() + " " + $("#sample6_address").val() + " " + $("#sample6_detailAddress_address").val() + " " + $("#sample6_extraAddress").val();
+      let postcode = $("#sample6_postcode").val(); // 우편번호
+      let address = $("#sample6_address").val();  // 주소
+      let detailAddress = $("#sample6_detailAddress").val(); // 상세주소
+      let extraAddress = $("#sample6_extraAddress").val(); // 참고항목
+      let fullAddress = "";
+
        
       // 정규표현식
       const expIdText = /^[A-Za-z]{3,20}$/;
@@ -76,13 +81,17 @@
       pw.on("blur", function(){
         if(!expPwText.test(pw.val())){
           $("#expPwError").css("display", "block");
-        } 
+        } else{
+          $("#expPwError").css("display", "none");
+        }
       }); // pw
 
       name.on("blur", function(){
         if(!expNameText.test(name.val())){
           $("#expNameError").css("display", "block");
-        } 
+        } else{
+          $("#expNameError").css("display", "none");
+        }
       }); // name
 
       /* --------------------- nickname --------------------- */
@@ -185,7 +194,7 @@
 
       /* --------------------- email --------------------- */
       $("#emailAddrs").on("change", function(){
-        var emailAddr = $(this).val();
+        let emailAddr = $(this).val();
 
         if(emailAddr != "") {
           $("#email_domain").prop("readonly", true);  // readonly 속성 설정
@@ -197,6 +206,8 @@
       });
       
       if((email_id.val() != "") && (email_domain != "")){
+        email = email_id.val() + "@" + email_domain;
+
         $.ajax({
           headers : {"X-CSRFToken":csrfToken},
           url : "/member/emailDupChk/",
@@ -232,21 +243,33 @@
 
 
       /* --------------------- #signupBtn - 회원가입 버튼 --------------------- */
-      // 나중에 alert 뜨는 거 대신 입력창테두리 빨갛게 변경할 것
+      // alert 대신 입력창테두리 빨갛게 변경할 것 <이거하다가 x될뻔 나중에하자
       $("#signupBtn").on("click", function(){
+        fullAddress = postcode + " " + address + " " + detailAddress + " " + extraAddress;
+
         if(!(id.val())){
           alert("사용하실 아이디를 입력하세요.");
+          id.focus();
+          return false;
+        } else if(!(expIdText.test(id.val()))){
+          alert("아이디를 확인해 주세요.");
           id.focus();
           return false;
         } else if(!(pw.val())){
           alert("사용하실 비밀번호를 입력하세요.");
           pw.focus();
           return false;
+        } else if(!(expPwText.test(pw.val()))){
+          alert("비밀번호를 확인해 주세요.");
         } else if(!(repeat__password.val())){
           alert("비밀번호 확인란을 입력하세요.");
           repeat__password.focus();
           return false;
-        } else if(!(name.val())){
+        } else if(repeat__password.val() !== pw.val()){
+          alert("비밀번호 확인란을 정확히 입력하세요.");
+          repeat__password.focus();
+          return false;
+        } else if(!(name.val()) || !expNameText.test(name.val())){
           alert("이름을 입력하세요.");
           name.focus();
           return false;
@@ -254,7 +277,7 @@
           alert("닉네임을 입력하세요.");
           nickname.focus();
           return false;
-        } else if(!(tel.val())){
+        } else if(!(tel.val()) || !expTelText.test(tel.val())){
           alert("전화번호를 입력하세요.");
           tel.focus();
           return false;
@@ -271,7 +294,6 @@
           return false;
         } 
 
-
         // 모든 조건 충족, 서버에 데이터 전송
         $.ajax({
           headers : {"X-CSRFToken":csrfToken},
@@ -283,10 +305,10 @@
             "name" : name.val(),
             "nickname" : nickname.val(),
             "tel" : tel.val(),
-            "email" : email,
-            "addr" : addr 
+            "email" : email_id.val() + "@" + email_domain,
+            "addr" : fullAddress 
           },
-  
+
           success : function(response){
             if(response.result == "success"){
               alert("회원가입이 완료되었습니다.");
@@ -299,7 +321,8 @@
             alert("서버 오류");
           }
         }); // ajax
-      }); // signupBtn - 회원가입 버튼
+      }); // #signupBtn - 회원가입버튼
+
     }); // jquery
   </script>
 
