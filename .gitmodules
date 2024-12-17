@@ -1,0 +1,6 @@
+[submodule "develope/반서현/develope/반서현/ag01_merge"]
+	path = develope/반서현/develope/반서현/ag01_merge
+	url = https://github.com/AngGGo/AngGGo.git
+[submodule "develope/반서현/workspace/AngGGo/AngGGo"]
+	path = develope/반서현/workspace/AngGGo/AngGGo
+	url = https://github.com/AngGGo/AngGGo.git
